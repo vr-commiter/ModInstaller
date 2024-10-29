@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ModInstaller": {
+      "commandName": "Project",
+      "commandLineArgs": "-i steam_546560 -o install -p \"E:\\steam\\steamapps\\common\\Half-Life Alyx\"  -d \"E:\\truegear_workspace\\data\\steam_546560\""
+    }
+  }
+}
