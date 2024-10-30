@@ -35,6 +35,7 @@ public class AppShell
             throw new InvalidOperationException("Only one EventHandler instance allowed!");
         }
 
+        _config = new Config();
         Instance = this;
         _downloader = new Downloader();
         _installer = new Installer();
@@ -52,8 +53,8 @@ public class AppShell
     private Installer _installer;
     internal Installer getInstaller()
     {
-        return    _installer;
-;
+        return _installer;
+        ;
     }
     private Downloader _downloader;
     internal Downloader getDownloader()
@@ -93,13 +94,14 @@ public class AppShell
         action?.Invoke(_runOptions);
     }
 
-    public async Task LoadConfig(string repoMainURL, bool force = false)
+    public async Task LoadConfig(bool force = false)
     {
+        string repoMainURL = string.Format(_config.RepoEndpoint + "version.json");
         try
         {
             Config config = null;
             string configPath = Path.Combine(TemplateFolder, "data.json");
-            if(!Directory.Exists(TemplateFolder ))
+            if (!Directory.Exists(TemplateFolder))
                 Directory.CreateDirectory(TemplateFolder);
 
             bool update = !File.Exists(configPath);
@@ -136,10 +138,10 @@ public class AppShell
 
     public async Task LoadGameModConfig(string appid)
     {
-            Game_AllModDataConfig config = null;
+        Game_AllModDataConfig config = null;
         try
         {
-            string repoMainURL = string.Format("https://raw.githubusercontent.com/vr-commiter/HapticModList/refs/heads/main/{0}/index.json", appid);
+            string repoMainURL = string.Format(_config.RepoEndpoint + "{0}/index.json", appid);
 
             string configPath = Path.Combine(TemplateFolder, appid + "_data.json");
             if (!Directory.Exists(TemplateFolder))

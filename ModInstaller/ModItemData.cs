@@ -30,7 +30,7 @@ public class ModItemData
 public class GameData
 {
     [JsonProperty("platform")] public string Platform { get; set; }
-    [JsonProperty("appid")] public string AppID { get; set; } 
+    [JsonProperty("appid")] public string AppID { get; set; }
     [JsonProperty("game_name")] public string GameName { get; set; }
 }
 public class GameModSummaryData

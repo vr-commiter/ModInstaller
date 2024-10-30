@@ -31,7 +31,7 @@ public partial class MainWindow : Window
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        _ = AppShell.Instance.LoadConfig("https://raw.githubusercontent.com/vr-commiter/HapticModList/refs/heads/main/version.json");
+        _ = AppShell.Instance.LoadConfig();
     }
 
 }

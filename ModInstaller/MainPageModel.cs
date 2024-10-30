@@ -47,7 +47,7 @@ public class MainPageModel : ObservableObject
                 if (options.AppId != null)
                     LoadGameAllMod(options.AppId);
                 GameInstallPath = options.InstallPath;
-                _dataPath = options.DataPath;
+                GameDataPath = options.DataPath;
             }
         });
     }
@@ -61,7 +61,8 @@ public class MainPageModel : ObservableObject
     public string GameInstallPath { get => _GameInstallPath; set => SetProperty(ref _GameInstallPath, value); }
 
     private string _dataPath;
-
+    public string GameDataPath { get => _dataPath; set => SetProperty(ref _dataPath, value); }
+    
     public IAsyncRelayCommand LoadModListDataCommand { get; }
     public IAsyncRelayCommand<string> SearchCmd { get; }
     public IAsyncRelayCommand<string> InstallCmd { get; }
@@ -98,19 +99,19 @@ public class MainPageModel : ObservableObject
         string md5_value1 = "";
         if (File.Exists(zip_path))
             md5_value1 = Utils.CalculateMD5(zip_path);
-        if(md5_value1 != downloadVer.Md5Value)
+        if (md5_value1 != downloadVer.Md5Value)
         {
             return;
         }
         var installer = AppShell.Instance.getInstaller();
         installer.Unzip(zip_path, ex_path);
         installer.ZipInstallMod(ex_path, GameInstallPath);
-        installer.ZipInstallApp(ex_path, _dataPath);
+        installer.ZipInstallApp(ex_path, GameDataPath);
 
         if (Directory.Exists(ex_path))
             Directory.Delete(ex_path, true);
 
         MessageBoxResult result = MessageBox.Show("Install Success");
-            Application.Current.Shutdown();
+        Application.Current.Shutdown();
     }
 }
