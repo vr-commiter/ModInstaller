@@ -11,17 +11,18 @@ using System.IO;
 
 public class AppShellOptions
 {
-    [Option('o', "operate", Required = false)]
+    [Option('o', "operate", Required = false)] // install , uninstall , reinstall 
     public string Operate { get; set; }
 
     [Option('u', "download_url", Required = false)]
     public string DownloadUrl { get; set; }
 
-    [Option('i', "appid", Required = false)]
+    [Option('i', "appid", Required = false)] 
     public string AppId { get; set; }
 
-    [Option('p', "install_path", Required = false)]
-    public string InstallPath { get; set; }
+    [Option('p', "game_path", Required = false)]
+    public string GamePath { get; set; }
+
     [Option('d', "data_path", Required = false)]
     public string DataPath { get; set; }
 }

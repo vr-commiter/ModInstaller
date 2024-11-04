@@ -1,6 +1,7 @@
 namespace ModInstaller;
 
 using ICSharpCode.SharpZipLib.Zip;
+using Newtonsoft.Json;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -135,5 +136,43 @@ public class Installer
                 }
             }
         }
+
+    }
+
+    internal void ModDel(string GamePath, string dataPath)
+    {
+        string app_path = Path.Combine(dataPath, "app");
+        string truegearInfoPath2 = Path.Combine(app_path, "truegear.json");
+        string text = File.ReadAllText(truegearInfoPath2);
+        AppModData gameInfo = JsonConvert.DeserializeObject<AppModData>(text);
+        if (gameInfo == null)
+            return;
+
+        if (gameInfo.ModFiles != null)
+        {
+            foreach (var line in gameInfo.ModFiles)
+            {
+                if (line.Length > 0)
+                {
+                    string mod_path = Path.Combine(GamePath, line);
+                    if (File.Exists(mod_path))
+                        File.Delete(mod_path);
+                }
+            }
+        }
+
+        try
+        {
+            if (File.Exists(truegearInfoPath2))
+                File.Delete(truegearInfoPath2);
+
+            if (Directory.Exists(dataPath))
+                Directory.Delete(dataPath, true);
+        }
+        catch (Exception e)
+        {
+            //logger.WriteMessage(e.Message + "ModDel");
+        }
+        // Process line
     }
 }

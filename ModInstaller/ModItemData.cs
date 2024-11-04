@@ -1,7 +1,14 @@
+using ModInstaller;
 using Newtonsoft.Json;
 
 namespace ModInstaller;
 
+public class AppModData
+{
+    [JsonProperty("appid")] public string AppID { get; set; }
+    [JsonProperty("mod_files")] public string[] ModFiles { get; set; }
+    [JsonProperty("exe_files")] public string[] ExeFiles { get; set; }
+}
 public class ModItemDataVersion
 {
     [JsonProperty("date_updated")] public string DateUpdated { get; set; }
@@ -10,7 +17,6 @@ public class ModItemDataVersion
     [JsonProperty("status")] public string Status { get; set; } // "test", "beta", "stable"
     [JsonProperty("version")] public string Version { get; set; }
 }
-
 public class ModItemData
 {
     // Origin app ID: Steam_APPID or Origin_APPID or Epic_APPID 

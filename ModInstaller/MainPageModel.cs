@@ -31,6 +31,7 @@ public class MainPageModel : ObservableObject
     private void GameModConfigLoadedCallback(GameModConfigLoadedEvent eventData)
     {
         ShowGameMod = true;
+
         if (eventData.Config != null)
         {
             CurrentGameModSummaryData = eventData.Config.Data;
@@ -40,15 +41,16 @@ public class MainPageModel : ObservableObject
 
     private void ConfigLoadedCallback(ConfigLoadedEvent eventData)
     {
+        this.OperateStr = "Install";
+
         AppShell.Instance.Run((AppShellOptions options) =>
         {
-            if (options.Operate == "install")
-            {
-                if (options.AppId != null)
-                    LoadGameAllMod(options.AppId);
-                GameInstallPath = options.InstallPath;
-                GameDataPath = options.DataPath;
-            }
+            this.OperateStr = options.Operate;
+
+            if (options.AppId != null)
+                LoadGameAllMod(options.AppId);
+            GameInstallPath = options.GamePath;
+            GameDataPath = options.DataPath;
         });
     }
 
@@ -73,16 +75,28 @@ public class MainPageModel : ObservableObject
 
     private bool isShowGameMod;
     public bool ShowGameMod { get => isShowGameMod; set => SetProperty(ref isShowGameMod, value); }
+    private string _operateStr;
+    public string OperateStr { get => _operateStr; set => SetProperty(ref _operateStr, value); }
 
     private IList<ModItemData> modListData;
     public IList<ModItemData> ModListData { get => modListData; set => SetProperty(ref modListData, value); }
-
     internal async Task SearchModCallback(string text)
     {
     }
 
     internal async Task InstallCallback(string text)
     {
+        var installer = AppShell.Instance.getInstaller();
+        if (this.OperateStr == "uninstall")
+        {
+            installer.ModDel(GameInstallPath, GameDataPath);
+            return;
+        }
+        if (this.OperateStr == "reinstall")
+        {
+            installer.ModDel(GameInstallPath, GameDataPath);
+        }
+
         var downloader = AppShell.Instance.getDownloader();
         GameModData modItem = GameModListData.First();
         string repoMainURL = string.Format("https://raw.githubusercontent.com/vr-commiter/HapticModList/refs/heads/main/{0}/{1}", CurrentGameModSummaryData.AppID, modItem.Json);
@@ -103,7 +117,6 @@ public class MainPageModel : ObservableObject
         {
             return;
         }
-        var installer = AppShell.Instance.getInstaller();
         installer.Unzip(zip_path, ex_path);
         installer.ZipInstallMod(ex_path, GameInstallPath);
         installer.ZipInstallApp(ex_path, GameDataPath);
