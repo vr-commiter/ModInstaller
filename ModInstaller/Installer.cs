@@ -92,6 +92,12 @@ public class Installer
 
         if (Directory.Exists(app_path))
             DirectoryCopy(app_path, destination, true);
+
+        string truegearInfoPath = Path.Combine(temp_directory, "truegear.info");
+        string truegearInfoPath2 = Path.Combine(checkFilePath1, "truegear.info");
+
+        FileInfo file = new FileInfo(truegearInfoPath);
+        file.CopyTo(truegearInfoPath2, true);
     }
 
     public void Unzip(string zipFile, string destination)
