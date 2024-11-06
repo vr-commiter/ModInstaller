@@ -148,7 +148,7 @@ public class Installer
     internal void ModDel(string GamePath, string dataPath)
     {
         string app_path = Path.Combine(dataPath, "app");
-        string truegearInfoPath2 = Path.Combine(app_path, "truegear.json");
+        string truegearInfoPath2 = Path.Combine(dataPath, "truegear.json");
         string text = File.ReadAllText(truegearInfoPath2);
         AppModData gameInfo = JsonConvert.DeserializeObject<AppModData>(text);
         if (gameInfo == null)
