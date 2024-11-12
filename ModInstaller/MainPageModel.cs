@@ -106,6 +106,8 @@ public class MainPageModel : ObservableObject
         {
             return;
         }
+
+        
         ModItemDataVersion downloadVer = repoConfig.VersionList.First();
         var zip_path = AppShell.TemplateFolder + "\\" + downloadVer.Md5Value + ".zip";
         var ex_path = AppShell.TemplateFolder + "\\" + downloadVer.Md5Value;
@@ -125,6 +127,12 @@ public class MainPageModel : ObservableObject
             Directory.Delete(ex_path, true);
 
         MessageBoxResult result = MessageBox.Show("Install Success");
+
+        if (!string.IsNullOrEmpty(repoConfig.ReadmeLink))
+        {
+            System.Diagnostics.Process.Start("explorer.exe", repoConfig.ReadmeLink);
+        }
+
         Application.Current.Shutdown();
     }
 }
