@@ -97,7 +97,8 @@ public class Installer
         string truegearInfoPath2 = Path.Combine(checkFilePath1, "truegear.info");
 
         FileInfo file = new FileInfo(truegearInfoPath);
-        file.CopyTo(truegearInfoPath2, true);
+        if (file.Exists)
+            file.CopyTo(truegearInfoPath2, true);
     }
 
     public void Unzip(string zipFile, string destination)
@@ -149,6 +150,10 @@ public class Installer
     {
         string app_path = Path.Combine(dataPath, "app");
         string truegearInfoPath2 = Path.Combine(dataPath, "truegear.json");
+
+        if (!File.Exists(truegearInfoPath2))
+            return;
+
         string text = File.ReadAllText(truegearInfoPath2);
         AppModData gameInfo = JsonConvert.DeserializeObject<AppModData>(text);
         if (gameInfo == null)
