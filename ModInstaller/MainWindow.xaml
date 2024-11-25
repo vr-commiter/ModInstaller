@@ -103,11 +103,6 @@
                         <Border BorderThickness="1" Grid.Row="0" Grid.ColumnSpan="2"  CornerRadius="8,8,8,8"  BorderBrush="#63666a">
                         </Border>
                         <TextBox  Text="{Binding GameInstallPath}"  VerticalAlignment="Center" FontSize="15"  Margin="10,0,10,0" Foreground="White" Background="{x:Null}" BorderThickness="0" BorderBrush="{x:Null}"  SelectionTextBrush="{x:Null}" CaretBrush="{x:Null}" />
-                    <Button Margin="0,0,10,0" Height="35" Width="50" Background="#f0f0f0"
-                        HorizontalAlignment="Right"  VerticalAlignment="Center"
-                        Command="{Binding LocateCmd}"
-                        Content="Locate"
-                        Style="{StaticResource MyButtonStyle}" />
                     </Grid>
                 </Grid>
                 <Grid>
@@ -122,11 +117,6 @@ Text="Data Path:"></TextBlock>
                         <Border BorderThickness="1" Grid.Row="0" Grid.ColumnSpan="2"  CornerRadius="8,8,8,8"  BorderBrush="#63666a">
                         </Border>
                         <TextBox  Text="{Binding GameDataPath}"  VerticalAlignment="Center" FontSize="15"  Margin="10,0,10,0" Foreground="White" Background="{x:Null}" BorderThickness="0" BorderBrush="{x:Null}"  SelectionTextBrush="{x:Null}" CaretBrush="{x:Null}" />
-                        <Button Margin="0,0,10,0" Height="35" Width="50" Background="#f0f0f0"
-            HorizontalAlignment="Right"  VerticalAlignment="Center"
-            Command="{Binding LocateCmd}"
-            Content="Locate"
-            Style="{StaticResource MyButtonStyle}" />
                     </Grid>
                 </Grid>
                 <Grid>

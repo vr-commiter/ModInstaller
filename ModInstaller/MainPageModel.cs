@@ -27,6 +27,11 @@ public class MainPageModel : ObservableObject
     private async void LoadGameAllMod(string appid)
     {
         await AppShell.Instance.LoadGameModConfig(appid);
+        var FileName = AppContext.BaseDirectory + "config.txt";
+        if (File.Exists(FileName))
+        {
+            await InstallCallback("silent");
+        }
     }
     private void GameModConfigLoadedCallback(GameModConfigLoadedEvent eventData)
     {
@@ -37,6 +42,7 @@ public class MainPageModel : ObservableObject
             CurrentGameModSummaryData = eventData.Config.Data;
             GameModListData = new List<GameModData>(eventData.Config.Data.Modlist); ;
         }
+
     }
 
     private void ConfigLoadedCallback(ConfigLoadedEvent eventData)
@@ -86,6 +92,17 @@ public class MainPageModel : ObservableObject
 
     internal async Task InstallCallback(string text)
     {
+        if (text != "silent")
+        {
+            var FileName = AppContext.BaseDirectory + "config.txt";
+
+            MessageBoxResult dr = MessageBox.Show(string.Format("Would you like to use silent mode for all Operate?"), "文件传输", MessageBoxButton.OKCancel);
+            if (dr == MessageBoxResult.OK)//如果点击“确定”按钮
+            {
+                File.WriteAllText(FileName, "silent");
+            }
+        }
+
         var installer = AppShell.Instance.getInstaller();
         if (this.OperateStr == "uninstall")
         {
@@ -106,7 +123,6 @@ public class MainPageModel : ObservableObject
         {
             return;
         }
-
         
         ModItemDataVersion downloadVer = repoConfig.VersionList.First();
         var zip_path = AppShell.TemplateFolder + "\\" + downloadVer.Md5Value + ".zip";
@@ -133,6 +149,6 @@ public class MainPageModel : ObservableObject
             System.Diagnostics.Process.Start("explorer.exe", repoConfig.ReadmeLink);
         }
 
-        Application.Current.Shutdown();
+        System.Windows.Application.Current.Shutdown();
     }
 }
