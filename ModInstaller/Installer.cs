@@ -110,40 +110,62 @@ public class Installer
             ZipEntry theEntry;
             while ((theEntry = s.GetNextEntry()) != null)
             {
-                string directoryName = Path.Combine(destination, theEntry.Name);
-                // create directory
-                if (directoryName.Length > 0 && theEntry.IsDirectory)
+                try
                 {
-                    Directory.CreateDirectory(directoryName);
-                    continue;
-                }
-
-                string fileName = Path.Combine(destination, theEntry.Name);
-                if (fileName != String.Empty && theEntry.IsFile)
-                {
-                    using (FileStream streamWriter = File.Create(fileName))
+                    string directoryName = Path.Combine(destination, theEntry.Name);
+                    FileInfo fi = new FileInfo(directoryName);
+                    if (!Directory.Exists(fi.DirectoryName) )
                     {
-
-                        int size = 2048;
-                        byte[] data = new byte[2048];
-                        while (true)
-                        {
-                            size = s.Read(data, 0, data.Length);
-                            if (size > 0)
-                            {
-                                streamWriter.Write(data, 0, size);
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                        streamWriter.Close();
+                        Directory.CreateDirectory(fi.DirectoryName);
                     }
+
+                    string fileName = Path.Combine(destination, theEntry.Name);
+                    if (fileName != String.Empty && theEntry.IsFile)
+                    {
+                        using (FileStream streamWriter = File.Create(fileName))
+                        {
+
+                            int size = 2048;
+                            byte[] data = new byte[2048];
+                            while (true)
+                            {
+                                size = s.Read(data, 0, data.Length);
+                                if (size > 0)
+                                {
+                                    streamWriter.Write(data, 0, size);
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                            streamWriter.Close();
+                        }
+                    }
+                }
+                catch(Exception)
+                {
+                    Console.WriteLine("Error while unzipping file: " + theEntry.Name);
                 }
             }
         }
 
+        using (ZipInputStream s = new ZipInputStream(File.OpenRead(zipFile)))
+        {
+            ZipEntry theEntry;
+            while ((theEntry = s.GetNextEntry()) != null)
+            {
+                try
+                {
+                    
+
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Error while unzipping file: " + theEntry.Name);
+                }
+            }
+        }
     }
 
     internal void ModDel(string GamePath, string dataPath)
