@@ -27,7 +27,7 @@ public class MainPageModel : ObservableObject
     private async void LoadGameAllMod(string appid)
     {
         await AppShell.Instance.LoadGameModConfig(appid);
-        var FileName = AppContext.BaseDirectory + "config.txt";
+        var FileName = AppShell.TemplateFolder + "config.txt";
         if (File.Exists(FileName))
         {
             await InstallCallback("silent");
@@ -94,7 +94,7 @@ public class MainPageModel : ObservableObject
     {
         if (text != "silent")
         {
-            var FileName = AppContext.BaseDirectory + "config.txt";
+            var FileName = AppShell.TemplateFolder + "config.txt";
 
             MessageBoxResult dr = MessageBox.Show(string.Format("Would you like to use silent mode for all Operate?"), "文件传输", MessageBoxButton.OKCancel);
             if (dr == MessageBoxResult.OK)//如果点击“确定”按钮
