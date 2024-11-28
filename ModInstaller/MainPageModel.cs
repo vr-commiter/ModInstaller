@@ -52,11 +52,11 @@ public class MainPageModel : ObservableObject
         AppShell.Instance.Run((AppShellOptions options) =>
         {
             this.OperateStr = options.Operate;
+            GameInstallPath = options.GamePath;
+            GameDataPath = options.DataPath;
 
             if (options.AppId != null)
                 LoadGameAllMod(options.AppId);
-            GameInstallPath = options.GamePath;
-            GameDataPath = options.DataPath;
         });
     }
 
@@ -70,7 +70,7 @@ public class MainPageModel : ObservableObject
 
     private string _dataPath;
     public string GameDataPath { get => _dataPath; set => SetProperty(ref _dataPath, value); }
-    
+
     public IAsyncRelayCommand LoadModListDataCommand { get; }
     public IAsyncRelayCommand<string> SearchCmd { get; }
     public IAsyncRelayCommand<string> InstallCmd { get; }
@@ -123,7 +123,7 @@ public class MainPageModel : ObservableObject
         {
             return;
         }
-        
+
         ModItemDataVersion downloadVer = repoConfig.VersionList.First();
         var zip_path = AppShell.TemplateFolder + "\\" + downloadVer.Md5Value + ".zip";
         var ex_path = AppShell.TemplateFolder + "\\" + downloadVer.Md5Value;
