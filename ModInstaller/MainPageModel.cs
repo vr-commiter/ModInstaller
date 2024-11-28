@@ -8,14 +8,19 @@ using System.Windows;
 
 public class MainPageModel : ObservableObject
 {
+    private string _configFile => Path.Combine(AppShell.TemplateFolder, "config.txt");
+    private bool _slientMode;
+
     public MainPageModel()
     {
         LoadModListDataCommand = new AsyncRelayCommand(GetModListDataCallback);
         SearchCmd = new AsyncRelayCommand<string>(SearchModCallback);
-        InstallCmd = new AsyncRelayCommand<string>(InstallCallback);
+        InstallCmd = new AsyncRelayCommand(InstallCallback);
         var _eventAggregator = AppShell.Instance.getEventAggregator();
         _eventAggregator.Subscribe<ConfigLoadedEvent>(ConfigLoadedCallback);
         _eventAggregator.Subscribe<GameModConfigLoadedEvent>(GameModConfigLoadedCallback);
+
+        _slientMode = File.Exists(_configFile);
     }
 
     internal void Init()
@@ -30,7 +35,7 @@ public class MainPageModel : ObservableObject
         var FileName = AppShell.TemplateFolder + "config.txt";
         if (File.Exists(FileName))
         {
-            await InstallCallback("silent");
+            await InstallCallback();
         }
     }
     private void GameModConfigLoadedCallback(GameModConfigLoadedEvent eventData)
@@ -42,7 +47,6 @@ public class MainPageModel : ObservableObject
             CurrentGameModSummaryData = eventData.Config.Data;
             GameModListData = new List<GameModData>(eventData.Config.Data.Modlist); ;
         }
-
     }
 
     private void ConfigLoadedCallback(ConfigLoadedEvent eventData)
@@ -71,9 +75,13 @@ public class MainPageModel : ObservableObject
     private string _dataPath;
     public string GameDataPath { get => _dataPath; set => SetProperty(ref _dataPath, value); }
 
+
     public IAsyncRelayCommand LoadModListDataCommand { get; }
     public IAsyncRelayCommand<string> SearchCmd { get; }
-    public IAsyncRelayCommand<string> InstallCmd { get; }
+    public IAsyncRelayCommand InstallCmd { get; }
+
+    public bool CanOperate { get => _canOperate; set => SetProperty(ref _canOperate, value); }
+    private bool _canOperate = true;
 
     internal async Task GetModListDataCallback()
     {
@@ -90,26 +98,19 @@ public class MainPageModel : ObservableObject
     {
     }
 
-    internal async Task InstallCallback(string text)
+    internal async Task InstallCallback()
     {
-        if (text != "silent")
-        {
-            var FileName = AppShell.TemplateFolder + "config.txt";
-
-            MessageBoxResult dr = MessageBox.Show(string.Format("Would you like to use silent mode for all Operate?"), "文件传输", MessageBoxButton.OKCancel);
-            if (dr == MessageBoxResult.OK)//如果点击“确定”按钮
-            {
-                File.WriteAllText(FileName, "silent");
-            }
-        }
+        CanOperate = false;
 
         var installer = AppShell.Instance.getInstaller();
-        if (this.OperateStr == "uninstall")
+        if (OperateStr == "uninstall")
         {
             installer.ModDel(GameInstallPath, GameDataPath);
+            Application.Current.Shutdown();
             return;
         }
-        if (this.OperateStr == "reinstall")
+
+        if (OperateStr == "reinstall")
         {
             installer.ModDel(GameInstallPath, GameDataPath);
         }
@@ -121,6 +122,7 @@ public class MainPageModel : ObservableObject
 
         if (repoConfig == null)
         {
+            CanOperate = true;
             return;
         }
 
@@ -133,6 +135,7 @@ public class MainPageModel : ObservableObject
             md5_value1 = Utils.CalculateMD5(zip_path);
         if (md5_value1 != downloadVer.Md5Value)
         {
+            CanOperate = true;
             return;
         }
         installer.Unzip(zip_path, ex_path);
@@ -142,13 +145,13 @@ public class MainPageModel : ObservableObject
         if (Directory.Exists(ex_path))
             Directory.Delete(ex_path, true);
 
-        MessageBoxResult result = MessageBox.Show("Install Success");
+        MessageBox.Show("Install Success");
 
         if (!string.IsNullOrEmpty(repoConfig.ReadmeLink))
         {
             System.Diagnostics.Process.Start("explorer.exe", repoConfig.ReadmeLink);
         }
 
-        System.Windows.Application.Current.Shutdown();
+        Application.Current.Shutdown();
     }
 }
