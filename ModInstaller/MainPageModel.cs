@@ -102,6 +102,18 @@ public class MainPageModel : ObservableObject
     {
         CanOperate = false;
 
+        if (!_slientMode)
+        {
+            var FileName = AppShell.TemplateFolder + "config.txt";
+
+            MessageBoxResult dr = MessageBox.Show(string.Format("Would you like to use silent mode for all Operate?"), "File Transfer", MessageBoxButton.OKCancel);
+            if (dr == MessageBoxResult.OK)//如果点击“确定”按钮
+            {
+                File.WriteAllText(FileName, "silent");
+                _slientMode = true;
+            }
+        }
+
         var installer = AppShell.Instance.getInstaller();
         if (OperateStr == "uninstall")
         {
@@ -130,9 +142,16 @@ public class MainPageModel : ObservableObject
         var zip_path = AppShell.TemplateFolder + "\\" + downloadVer.Md5Value + ".zip";
         var ex_path = AppShell.TemplateFolder + "\\" + downloadVer.Md5Value;
         await downloader.ZipDownloadAsync(zip_path, downloadVer.DownloadLink, downloadVer.Md5Value);
+
+        // 文件下载失败
+        if (!File.Exists(zip_path))
+        {
+            CanOperate = true;
+            return;
+        }
+
         string md5_value1 = "";
-        if (File.Exists(zip_path))
-            md5_value1 = Utils.CalculateMD5(zip_path);
+        md5_value1 = Utils.CalculateMD5(zip_path);
         if (md5_value1 != downloadVer.Md5Value)
         {
             CanOperate = true;
