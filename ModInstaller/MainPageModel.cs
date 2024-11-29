@@ -9,7 +9,7 @@ using System.Windows;
 public class MainPageModel : ObservableObject
 {
     private string _configFile => Path.Combine(AppShell.TemplateFolder, "config.txt");
-    private bool _slientMode;
+    private bool _silentMode;
 
     public MainPageModel()
     {
@@ -20,7 +20,7 @@ public class MainPageModel : ObservableObject
         _eventAggregator.Subscribe<ConfigLoadedEvent>(ConfigLoadedCallback);
         _eventAggregator.Subscribe<GameModConfigLoadedEvent>(GameModConfigLoadedCallback);
 
-        _slientMode = File.Exists(_configFile);
+        _silentMode = File.Exists(_configFile);
     }
 
     internal void Init()
@@ -32,12 +32,10 @@ public class MainPageModel : ObservableObject
     private async void LoadGameAllMod(string appid)
     {
         await AppShell.Instance.LoadGameModConfig(appid);
-        var FileName = AppShell.TemplateFolder + "config.txt";
-        if (File.Exists(FileName))
-        {
+        if (_silentMode)
             await InstallCallback();
-        }
     }
+
     private void GameModConfigLoadedCallback(GameModConfigLoadedEvent eventData)
     {
         ShowGameMod = true;
@@ -102,15 +100,13 @@ public class MainPageModel : ObservableObject
     {
         CanOperate = false;
 
-        if (!_slientMode)
+        if (!_silentMode)
         {
-            var FileName = AppShell.TemplateFolder + "config.txt";
-
             MessageBoxResult dr = MessageBox.Show(string.Format("Would you like to use silent mode for all Operate?"), "File Transfer", MessageBoxButton.OKCancel);
             if (dr == MessageBoxResult.OK)//如果点击“确定”按钮
             {
-                File.WriteAllText(FileName, "silent");
-                _slientMode = true;
+                File.WriteAllText(_configFile, "silent");
+                _silentMode = true;
             }
         }
 
