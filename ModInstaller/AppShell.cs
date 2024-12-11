@@ -17,7 +17,7 @@ public class AppShellOptions
     [Option('u', "download_url", Required = false)]
     public string DownloadUrl { get; set; }
 
-    [Option('i', "appid", Required = false)] 
+    [Option('i', "appid", Required = false)]
     public string AppId { get; set; }
 
     [Option('p', "game_path", Required = false)]
@@ -25,6 +25,26 @@ public class AppShellOptions
 
     [Option('d', "data_path", Required = false)]
     public string DataPath { get; set; }
+
+    [Option('s', "show_guide", Required = false)]
+    public string IsShowGuide { get; set; } = "true";
+
+    public bool ShowGuide
+    {
+        get
+        {
+            if (_showGuide == null)
+            {
+                if (bool.TryParse(IsShowGuide, out var result))
+                    _showGuide = result;
+                else
+                    _showGuide = true;
+            }
+            return _showGuide.Value;
+        }
+    }
+
+    private bool? _showGuide = null;
 }
 
 public class AppShell
@@ -82,6 +102,8 @@ public class AppShell
             return appDataRootPath;
         }
     }
+
+    public bool IsShowGuide => _runOptions.ShowGuide;
 
     private AppShellOptions _runOptions;
 

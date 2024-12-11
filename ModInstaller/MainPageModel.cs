@@ -28,7 +28,6 @@ public class MainPageModel : ObservableObject
         AsyncContext.Run(() => GetModListDataCallback());
     }
 
-
     private async void LoadGameAllMod(string appid)
     {
         await AppShell.Instance.LoadGameModConfig(appid);
@@ -72,7 +71,6 @@ public class MainPageModel : ObservableObject
 
     private string _dataPath;
     public string GameDataPath { get => _dataPath; set => SetProperty(ref _dataPath, value); }
-
 
     public IAsyncRelayCommand LoadModListDataCommand { get; }
     public IAsyncRelayCommand<string> SearchCmd { get; }
@@ -162,7 +160,7 @@ public class MainPageModel : ObservableObject
 
         MessageBox.Show("Install Success");
 
-        if (!string.IsNullOrEmpty(repoConfig.ReadmeLink))
+        if (AppShell.Instance.IsShowGuide && !string.IsNullOrEmpty(repoConfig.ReadmeLink))
         {
             System.Diagnostics.Process.Start("explorer.exe", repoConfig.ReadmeLink);
         }
