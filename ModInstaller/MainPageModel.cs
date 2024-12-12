@@ -8,8 +8,14 @@ using System.Windows;
 
 public class MainPageModel : ObservableObject
 {
-    private string _configFile => Path.Combine(AppShell.TemplateFolder, "config.txt");
+    public bool SilentMode
+    {
+        get => _silentMode;
+        set => SetProperty(ref _silentMode, value);
+    }
     private bool _silentMode;
+
+    private string _configFile => Path.Combine(AppShell.TemplateFolder, "config.txt");
 
     public MainPageModel()
     {
@@ -20,7 +26,7 @@ public class MainPageModel : ObservableObject
         _eventAggregator.Subscribe<ConfigLoadedEvent>(ConfigLoadedCallback);
         _eventAggregator.Subscribe<GameModConfigLoadedEvent>(GameModConfigLoadedCallback);
 
-        _silentMode = File.Exists(_configFile);
+        SilentMode = File.Exists(_configFile);
     }
 
     internal void Init()
@@ -94,6 +100,13 @@ public class MainPageModel : ObservableObject
     {
     }
 
+    private void HandleFailed()
+    {
+        CanOperate = true;
+        if (SilentMode)
+            Application.Current.Shutdown();
+    }
+
     internal async Task InstallCallback()
     {
         CanOperate = false;
@@ -128,7 +141,7 @@ public class MainPageModel : ObservableObject
 
         if (repoConfig == null)
         {
-            CanOperate = true;
+            HandleFailed();
             return;
         }
 
@@ -140,7 +153,7 @@ public class MainPageModel : ObservableObject
         // ÎÄ¼þÏÂÔØÊ§°Ü
         if (!File.Exists(zip_path))
         {
-            CanOperate = true;
+            HandleFailed();
             return;
         }
 
@@ -148,7 +161,7 @@ public class MainPageModel : ObservableObject
         md5_value1 = Utils.CalculateMD5(zip_path);
         if (md5_value1 != downloadVer.Md5Value)
         {
-            CanOperate = true;
+            HandleFailed();
             return;
         }
         installer.Unzip(zip_path, ex_path);
@@ -158,7 +171,8 @@ public class MainPageModel : ObservableObject
         if (Directory.Exists(ex_path))
             Directory.Delete(ex_path, true);
 
-        MessageBox.Show("Install Success");
+        if (!SilentMode)
+            MessageBox.Show("Install Success");
 
         if (AppShell.Instance.IsShowGuide && !string.IsNullOrEmpty(repoConfig.ReadmeLink))
         {

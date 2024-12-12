@@ -114,7 +114,7 @@ public class Installer
                 {
                     string directoryName = Path.Combine(destination, theEntry.Name);
                     FileInfo fi = new FileInfo(directoryName);
-                    if (!Directory.Exists(fi.DirectoryName) )
+                    if (!Directory.Exists(fi.DirectoryName))
                     {
                         Directory.CreateDirectory(fi.DirectoryName);
                     }
@@ -143,7 +143,7 @@ public class Installer
                         }
                     }
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     Console.WriteLine("Error while unzipping file: " + theEntry.Name);
                 }
@@ -157,7 +157,7 @@ public class Installer
             {
                 try
                 {
-                    
+
 
                 }
                 catch (Exception)
@@ -170,26 +170,25 @@ public class Installer
 
     internal void ModDel(string GamePath, string dataPath)
     {
-        string app_path = Path.Combine(dataPath, "app");
         string truegearInfoPath2 = Path.Combine(dataPath, "truegear.json");
 
-        if (!File.Exists(truegearInfoPath2))
-            return;
-
-        string text = File.ReadAllText(truegearInfoPath2);
-        AppModData gameInfo = JsonConvert.DeserializeObject<AppModData>(text);
-        if (gameInfo == null)
-            return;
-
-        if (gameInfo.ModFiles != null)
+        if (File.Exists(truegearInfoPath2))
         {
-            foreach (var line in gameInfo.ModFiles)
+            string text = File.ReadAllText(truegearInfoPath2);
+            AppModData gameInfo = JsonConvert.DeserializeObject<AppModData>(text);
+            if (gameInfo == null)
+                return;
+
+            if (gameInfo.ModFiles != null)
             {
-                if (line.Length > 0)
+                foreach (var line in gameInfo.ModFiles)
                 {
-                    string mod_path = Path.Combine(GamePath, line);
-                    if (File.Exists(mod_path))
-                        File.Delete(mod_path);
+                    if (line.Length > 0)
+                    {
+                        string mod_path = Path.Combine(GamePath, line);
+                        if (File.Exists(mod_path))
+                            File.Delete(mod_path);
+                    }
                 }
             }
         }
